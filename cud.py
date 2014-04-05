@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
+# Universal Cassandra Driver
 # by Carles Mateo
 # http://blog.carlesmateo.com
 
 import cgi
 import cgitb
 import logging
+import sys
 
 cgitb.enable() # Optional; for debugging only
 
@@ -28,21 +30,48 @@ KEYSPACE = "testkeyspace"
 print "Content-Type: text/html"
 print ""
 
-print "Debug"
-
-#st_arguments = cgi.FieldStorage()
+st_arguments = cgi.FieldStorage()
 #for i in arguments.keys():
 # print i
 # print ":"
 # print arguments[i].value
 # print "<br />"
 
-s_cql = st_arguments['cql']
-s_keyspace = st_arguments['keyspace']
-s_cluster = st_arguments['cluster']
 
-cluster = Cluster(['127.0.0.1'])
-session = cluster.connect()
+b_error = 0
+i_error_code = 0
+s_html_output = ''
+
+try:
+    s_cql = st_arguments['cql']
+    s_keyspace = st_arguments['keyspace']
+    s_cluster = st_arguments['cluster']
+    s_user = st_arguments['user']
+    s_password = st_arguments['password']
+except Exception:
+    b_error = 1
+    i_error_code = 100 # No params passed
+    s_html_output = str(i_error_code)
+    s_html_output = s_html_output +'\nError parameters not send\n\n'
+    # Log into Apache's error log
+    log.info(s_html_output)
+    # Return via Tcp
+    print s_html_output
+    sys.exit()
+
+try:
+    cluster = Cluster([s_cluster])
+    session = cluster.connect()
+except Exception:
+    b_error = 1
+    i_error_code = 200 # Cannot connect
+    s_html_output = str(i_error_code)
+    s_html_output = s_html_output + '\nCannot connect to cluster\n\n'
+    # Log into Apache's error log
+    log.info(s_html_output)
+    # Return via Tcp
+    print s_html_output
+    sys.exit()
 
 rows = session.execute("SELECT keyspace_name FROM system.schema_keyspaces")
 if KEYSPACE in [row[0] for row in rows]:
