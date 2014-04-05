@@ -24,7 +24,8 @@ from cassandra import ConsistencyLevel
 from cassandra.cluster import Cluster
 from cassandra.query import SimpleStatement
 
-KEYSPACE = "testkeyspace"
+s_row_separator = "||*||"
+s_end_of_row = "//*//"
 
 #def main():
 print "Content-Type: text/html"
@@ -51,20 +52,31 @@ def getParam(st_arguments, s_param):
 
     return ''
 
-def returnError(i_error_code, s_error_description, s_format):
-    s_html_output = str(i_error_code)
-    s_html_output = s_html_output + '\n' + s_error_description + '\n\n'
+def returnSuccess(i_counter, s_data, s_format = 'html'):
+    s_html_output = str(0)
+    s_html_output = s_html_output + '\n' + 'Data returned Ok' + '\n'
+    s_html_output = s_html_output + str(i_counter) + '\n'
+    s_html_output = s_html_output + str(s_data) + '\n'
     log.info(s_html_output)
     print s_html_output
     sys.exit()
+    return
+
+def returnError(i_error_code, s_error_description, s_format = 'html'):
+    s_html_output = str(i_error_code)
+    s_html_output = s_html_output + '\n' + s_error_description + '\n0\n\n'
+    log.info(s_html_output)
+    print s_html_output
+    sys.exit()
+    return
 
 try:
     s_cql = getParam(st_arguments, 'cql')
     s_cluster = getParam(st_arguments, 'cluster')
-    if s_cql == '' || s_cluster == '':
-        returnError(i_error_code, 'Error parameters not send. Call with params: cql and cluster')
+    if s_cql == '' or s_cluster == '':
+        returnError(100, 'Error parameters not send. Call with params: cql and cluster')
 except Exception:
-    returnError(i_error_code, 'Error parameters not send. Call with params: cql and cluster')
+    returnError(100, 'Error parameters not send. Call with params: cql and cluster')
 
 try:
     s_keyspace = getParam(st_arguments, 'keyspace')
@@ -76,7 +88,7 @@ except Exception:
 try:
     s_user = getParam(st_arguments, 'user')
     s_password = getParam(st_arguments, 'password')
-    if s_user == '' || s_password == '':
+    if s_user == '' or s_password == '':
         b_use_user_and_password = 0
 except Exception:
     b_use_user_and_password = 0
@@ -86,30 +98,44 @@ except Exception:
 try:
     cluster = Cluster([s_cluster])
     session = cluster.connect()
-except Exception:
-    returnError(200, 'Cannot connect to cluster '+s_cluster)
+except Exception as e:
+    returnError(200, 'Cannot connect to cluster ' + s_cluster + '.' + e.message)
 
 if (b_use_keyspace == 1):
     #log.info("setting keyspace...")
     try:
         session.set_keyspace(s_keyspace)
     except:
-        returnError(210, 'Keyspace ' + s_keyspace + ' does not exist'')
+        returnError(210, 'Keyspace ' + s_keyspace + ' does not exist')
 
 # Samples:
 # Create Keyspace test
 # http://127.0.0.1/cgi-bin/cud.py?cluster=127.0.0.1&user=test&password=test&keyspace=&cql=CREATE%20KEYSPACE%20test%20WITH%20REPLICATION%20=%20{%20%27class%27:%20%27SimpleStrategy%27,%20%27replication_factor%27:%20%271%27%20}
+# Create mytable
+# 127.0.0.1/cgi-bin/cud.py?cluster=127.0.0.1&user=test&password=test&keyspace=test&cql=CREATE TABLE mytable (thekey text,col1 text,col2 text,PRIMARY KEY (thekey, col1))
+# Select from mytable
+# 127.0.0.1/cgi-bin/cud.py?cluster=127.0.0.1&user=test&password=test&keyspace=test&cql=SELECT * FROM mytable
 
-
-o_results = session.execute(s_cql)
+try:
+    o_results = session.execute(s_cql)
+except Exception as e:
+    returnError(300, 'Error executing query. ' + e.message )
 
 try:
     rows = o_results.result()
-except Exception:
-    returnError(300, 'Error executing query')
+except Exception as e:
+    returnError(0, 'Query returned no values. ' + e.message)
 
+# Query returned values
+i_counter = 0
 for row in rows:
-    log.info('\t'.join(row))
+    i_counter = i_counter + 1
+    s_data = s_data + s_row_separator.join(row)
+    s_data = s_data + s_end_of_row
+    #log.info('\t'.join(row))
+
+returnSuccess(i_counter, s_data)
+
 
 #if __name__ == "__main__":
 #    main()
