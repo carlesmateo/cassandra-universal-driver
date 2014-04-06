@@ -1,4 +1,7 @@
 <?php
+
+$i_start_time = microtime(true);
+
 $ch = curl_init("http://127.0.0.1/cgi-bin/cud.py?cluster=127.0.0.1&user=test&password=test&keyspace=test&cql=SELECT+*+FROM+mytable");
 curl_setopt($ch, CURLOPT_HEADER, 0);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -34,3 +37,8 @@ if ($st_results[0] == 0) {
     echo 'There was an error executing the query: '.$st_results[1]."\n";
 }
 
+
+$i_finish_time = microtime(true);
+$i_execution_time = $i_finish_time-$i_start_time;
+
+echo "Execution time: ".$i_execution_time."\n";
