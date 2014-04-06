@@ -26,6 +26,7 @@ from cassandra.query import SimpleStatement
 
 s_row_separator = "||*||"
 s_end_of_row = "//*//"
+s_data = ''
 
 #def main():
 print "Content-Type: text/html"
@@ -113,11 +114,13 @@ if (b_use_keyspace == 1):
 # http://127.0.0.1/cgi-bin/cud.py?cluster=127.0.0.1&user=test&password=test&keyspace=&cql=CREATE%20KEYSPACE%20test%20WITH%20REPLICATION%20=%20{%20%27class%27:%20%27SimpleStrategy%27,%20%27replication_factor%27:%20%271%27%20}
 # Create mytable
 # 127.0.0.1/cgi-bin/cud.py?cluster=127.0.0.1&user=test&password=test&keyspace=test&cql=CREATE TABLE mytable (thekey text,col1 text,col2 text,PRIMARY KEY (thekey, col1))
+# Insert to mytable
+# 127.0.0.1/cgi-bin/cud.py?cluster=127.0.0.1&user=test&password=test&keyspace=test&cql=INSERT INTO mytable (thekey, col1, col2)VALUES ('first', 'Carles Mateo', 'http://blog.carlesmateo.com')
 # Select from mytable
 # 127.0.0.1/cgi-bin/cud.py?cluster=127.0.0.1&user=test&password=test&keyspace=test&cql=SELECT * FROM mytable
 
 try:
-    o_results = session.execute(s_cql)
+    o_results = session.execute_async(s_cql)
 except Exception as e:
     returnError(300, 'Error executing query. ' + e.message )
 
@@ -128,11 +131,24 @@ except Exception as e:
 
 # Query returned values
 i_counter = 0
-for row in rows:
-    i_counter = i_counter + 1
-    s_data = s_data + s_row_separator.join(row)
-    s_data = s_data + s_end_of_row
-    #log.info('\t'.join(row))
+try:
+    #print rows
+
+    for row in rows:
+        i_counter = i_counter + 1
+
+        if i_counter == 1:
+            for key, value in vars(row).iteritems():
+                s_data = s_data + key + s_row_separator
+
+            s_data = s_data + s_end_of_row
+
+        s_data = s_data + s_row_separator.join(row)
+        s_data = s_data + s_end_of_row
+        #log.info('\t'.join(row))
+except Exception as e:
+    # No iterable data
+    returnSuccess(i_counter, s_data)
 
 returnSuccess(i_counter, s_data)
 
