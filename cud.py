@@ -114,8 +114,10 @@ if (b_use_keyspace == 1):
 # http://127.0.0.1/cgi-bin/cud.py?cluster=127.0.0.1&user=test&password=test&keyspace=&cql=CREATE%20KEYSPACE%20test%20WITH%20REPLICATION%20=%20{%20%27class%27:%20%27SimpleStrategy%27,%20%27replication_factor%27:%20%271%27%20}
 # Create mytable
 # 127.0.0.1/cgi-bin/cud.py?cluster=127.0.0.1&user=test&password=test&keyspace=test&cql=CREATE TABLE mytable (thekey text,col1 text,col2 text,PRIMARY KEY (thekey, col1))
+# 127.0.0.1/cgi-bin/cud.py?cluster=127.0.0.1&user=test&password=test&keyspace=test&cql=CREATE TABLE mytable2 (thekey text,col1 text,col2 text,anumber int,PRIMARY KEY (thekey, col1))
 # Insert to mytable
 # 127.0.0.1/cgi-bin/cud.py?cluster=127.0.0.1&user=test&password=test&keyspace=test&cql=INSERT INTO mytable (thekey, col1, col2)VALUES ('first', 'Carles Mateo', 'http://blog.carlesmateo.com')
+# 127.0.0.1/cgi-bin/cud.py?cluster=127.0.0.1&user=test&password=test&keyspace=test&cql=INSERT INTO mytable2 (thekey, col1, col2, anumber)VALUES ('first', 'Carles Mateo', 'http://blog.carlesmateo.com', 7)
 # Select from mytable
 # 127.0.0.1/cgi-bin/cud.py?cluster=127.0.0.1&user=test&password=test&keyspace=test&cql=SELECT * FROM mytable
 
@@ -127,7 +129,7 @@ except Exception as e:
 try:
     rows = o_results.result()
 except Exception as e:
-    returnError(0, 'Query returned no values. ' + e.message)
+    returnError(310, 'Query returned result error. ' + e.message)
 
 # Query returned values
 i_counter = 0
@@ -143,11 +145,16 @@ try:
 
             s_data = s_data + s_end_of_row
 
-        s_data = s_data + s_row_separator.join(row)
+        for key, value in vars(row).iteritems():
+            # Convert to string numbers or other types
+            s_data = s_data + str(value) + s_row_separator
+
+        #s_data = s_data + s_row_separator.join(row)
         s_data = s_data + s_end_of_row
         #log.info('\t'.join(row))
 except Exception as e:
     # No iterable data
+    print e.message
     returnSuccess(i_counter, s_data)
 
 returnSuccess(i_counter, s_data)
