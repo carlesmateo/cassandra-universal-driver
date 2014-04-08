@@ -34,7 +34,7 @@ if ($st_results[0] == 0) {
     }
 
 } else {
-    echo 'There was an error executing the query: '.$st_results[1]."\n";
+    echo 'There was an error executing the query: error code: '.$st_results[0].' error description: '.$st_results[1]."\n";
 }
 
 
