@@ -6,6 +6,8 @@ http://cassandradriver.com
 Carles Mateo
 Added Perl Sample
 
+If field is empty (None), empty string is returned instead of None
+
 2014-04-07
 Carles Mateo
 Released version 1.0 of Cassandra Universal Driver
