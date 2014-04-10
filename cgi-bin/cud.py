@@ -136,25 +136,25 @@ i_counter = 0
 try:
     #print rows
 
-    for row in rows:
-        i_counter = i_counter + 1
+    if rows is not None:
+        for row in rows:
+            i_counter = i_counter + 1
 
-        if i_counter == 1:
+            if i_counter == 1:
+                for key, value in vars(row).iteritems():
+                    s_data = s_data + key + s_row_separator
+
+                s_data = s_data + s_end_of_row
+
             for key, value in vars(row).iteritems():
-                s_data = s_data + key + s_row_separator
+                # Convert to string numbers or other types
+                s_data = s_data + str(value) + s_row_separator
 
+            #s_data = s_data + s_row_separator.join(row)
             s_data = s_data + s_end_of_row
-
-        for key, value in vars(row).iteritems():
-            # Convert to string numbers or other types
-            s_data = s_data + str(value) + s_row_separator
-
-        #s_data = s_data + s_row_separator.join(row)
-        s_data = s_data + s_end_of_row
-        #log.info('\t'.join(row))
+            #log.info('\t'.join(row))
 except Exception as e:
     # No iterable data
-    print e.message
     returnSuccess(i_counter, s_data)
 
 returnSuccess(i_counter, s_data)
