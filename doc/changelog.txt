@@ -1,0 +1,11 @@
+Changelog
+=========
+http://cassandradriver.com
+
+2014-04-10
+Carles Mateo
+Added Perl Sample
+
+2014-04-07
+Carles Mateo
+Released version 1.0 of Cassandra Universal Driver
