@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 # Universal Cassandra Driver
+# cassandradriver.com
 # by Carles Mateo
 # http://blog.carlesmateo.com
 
