@@ -61,8 +61,8 @@ def returnError(i_error_code, s_error_description, s_format = 'html'):
 
 def returnResponse(i_error_code, s_error_description, i_counter, s_data, s_format = 'html'):
     if s_format == 'xml':
-        print "Content-Type: text/xml"
-        print ""
+        print ("Content-Type: text/xml")
+        print ("")
         s_html_output = "<?xml version='1.0' standalone='yes'?>"
         s_html_output = s_html_output + '<response>' \
                                         '<status>' \
@@ -73,15 +73,15 @@ def returnResponse(i_error_code, s_error_description, i_counter, s_data, s_forma
                                         '<data>' + s_data + '</data>' \
                                         '</response>'
     else:
-        print "Content-Type: text/html"
-        print ""
+        print("Content-Type: text/html")
+        print("")
         s_html_output = str(i_error_code)
         s_html_output = s_html_output + '\n' + s_error_description + '\n'
         s_html_output = s_html_output + str(i_counter) + '\n'
         s_html_output = s_html_output + str(s_data) + '\n'
 
     log.info(s_html_output)
-    print s_html_output
+    print(s_html_output)
     sys.exit()
     return
 
@@ -161,8 +161,6 @@ except Exception as e:
 # Query returned values
 i_counter = 0
 try:
-    #print rows
-
     if rows is not None:
         for row in rows:
             i_counter = i_counter + 1
