@@ -2,6 +2,7 @@
     <head>
         <title>PHP Cassandra Universal Driver Sample</title>
     </head>
+    <body>
 <?php
 
 /**
@@ -17,13 +18,19 @@
 $i_start_time = microtime(true);
 
 $s_cql = 'SELECT * FROM mytable';
-$s_cql = urlencode($s_cql);
+$s_cql_encoded = urlencode($s_cql);
 
-$ch = curl_init("http://127.0.0.1/cgi-bin/cud.py?cluster=127.0.0.1&user=test&password=test&keyspace=test&cql=$s_cql");
+$ch = curl_init("http://127.0.0.1/cgi-bin/cud.py?cluster=127.0.0.1&user=test&password=test&keyspace=test&cql=$s_cql_encoded");
 curl_setopt($ch, CURLOPT_HEADER, 0);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 $s_results = curl_exec($ch);
 curl_close($ch);
+
+$i_finish_time_http = microtime(true);
+
+echo 'Your original query:<br />';
+echo '<pre>'.$s_cql.'</pre>';
+echo '<br />';
 
 $s_row_separator = '||*||';
 $s_end_of_row    = '//*//';
@@ -90,10 +97,13 @@ if ($st_results[0] == 0) {
     echo 'There was an error executing the query: error code: '.$st_results[0].' error description: '.$st_results[1]."<br />";
 }
 
+$i_execution_time_http = $i_finish_time_http - $i_start_time;
 
 $i_finish_time = microtime(true);
 $i_execution_time = $i_finish_time-$i_start_time;
 
-echo "Execution time: ".$i_execution_time."\n";
+echo "Curl execution time: ".$i_execution_time_http."<br />";
+echo "Total execution time: ".$i_execution_time."<br />";
 ?>
+    </body>
 </html>

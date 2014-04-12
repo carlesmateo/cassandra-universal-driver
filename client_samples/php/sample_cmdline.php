@@ -8,6 +8,8 @@ curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 $s_results = curl_exec($ch);
 curl_close($ch);
 
+$i_finish_time_http = microtime(true);
+
 $s_row_separator = '||*||';
 $s_end_of_row    = '//*//';
 
@@ -38,7 +40,10 @@ if ($st_results[0] == 0) {
 }
 
 
+$i_execution_time_http = $i_finish_time_http - $i_start_time;
+
 $i_finish_time = microtime(true);
 $i_execution_time = $i_finish_time-$i_start_time;
 
-echo "Execution time: ".$i_execution_time."\n";
+echo "Curl execution time: ".$i_execution_time_http."\n";
+echo "Total execution time: ".$i_execution_time."\n";
