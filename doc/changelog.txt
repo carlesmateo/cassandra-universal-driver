@@ -2,6 +2,12 @@ Changelog
 =========
 http://cassandradriver.com
 
+2014-04-13 - V.1.12
+Carles Mateo
+Added sample code for node.js
+
+Added file doc/folder_structure.txt
+
 2014-04-12 - V.1.12
 Carles Mateo
 UTF-8 support
