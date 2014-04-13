@@ -92,7 +92,7 @@ def returnResponse(i_error_code, s_error_description, i_counter, s_data, s_forma
 
 def converToString(s_input):
     # Convert other data types to string
-    if isinstance(s_input, (int, float, bool)):
+    if isinstance(s_input, (int, float, bool, list, dict, tuple, set)):
         # Convert to string
         s_input = str(s_input)
 
@@ -222,7 +222,7 @@ try:
                 s_data = s_data + '</row>'
             else:
                 s_data = s_data + s_end_of_row
-        #log.info('\t'.join(row))
+            #log.info('\t'.join(row))
 except Exception as e:
     # No iterable data
     returnSuccess(i_counter, s_data, s_format)
