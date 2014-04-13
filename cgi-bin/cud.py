@@ -140,8 +140,8 @@ if (b_use_keyspace == 1):
 # 127.0.0.1/cgi-bin/cud.py?cluster=127.0.0.1&user=test&password=test&keyspace=test&cql=CREATE TABLE mytable2 (thekey text,col1 text,col2 text,anumber int,PRIMARY KEY (thekey, col1))
 # http://127.0.0.1/cgi-bin/cud.py?cluster=127.0.0.1&user=test&password=test&keyspace=test&cql=CREATE+TABLE+IF+NOT+EXISTS+test+%28userid+int%2C+firstname+text%2C+lastname+text%2C+tele+set%3Ctext%3E%2C+emails+set%3Ctext%3E%2C+skills+list%3Ctext%3E%2C+todos+map%3Ctimestamp%2Ctext%3E%2C+PRIMARY+KEY+%28userid%29+%29%3B
 # Insert to mytable, not UrlEncoded
-# 127.0.0.1/cgi-bin/cud.py?cluster=127.0.0.1&user=test&password=test&keyspace=test&cql=INSERT INTO mytable (thekey, col1, col2)VALUES ('first', 'Carles Mateo', 'http://blog.carlesmateo.com')
-# 127.0.0.1/cgi-bin/cud.py?cluster=127.0.0.1&user=test&password=test&keyspace=test&cql=INSERT INTO mytable2 (thekey, col1, col2, anumber)VALUES ('first', 'Carles Mateo', 'http://blog.carlesmateo.com', 7)
+# 127.0.0.1/cgi-bin/cud.py?cluster=127.0.0.1&user=test&password=test&keyspace=test&cql=INSERT INTO mytable (thekey, col1, col2) VALUES ('first', 'Carles Mateo', 'http://blog.carlesmateo.com')
+# 127.0.0.1/cgi-bin/cud.py?cluster=127.0.0.1&user=test&password=test&keyspace=test&cql=INSERT INTO mytable2 (thekey, col1, col2, anumber) VALUES ('first', 'Carles Mateo', 'http://blog.carlesmateo.com', 7)
 # 127.0.0.1/cgi-bin/cud.py?cluster=127.0.0.1&user=test&password=test&keyspace=test&cql=INSERT INTO test (userid,firstname,lastname) VALUES (1,'Carles','Mateo')
 # UrlEncoded
 # 127.0.0.1/cgi-bin/cud.py?cluster=127.0.0.1&user=test&password=test&keyspace=test&cql=INSERT+INTO+test+%28userid%2Cfirstname%2Clastname%29+VALUES+%281%2C%27Carles%27%2C%27Mateo%27%29
