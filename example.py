@@ -1,6 +1,8 @@
 #!/usr/bin/env python
+# -*- coding: UTF-8 -*-
 
 # Note by Carles Mateo: This is the default example.py Cassandra's sample shipped with python drivers
+# Encoding UTF-8 has been added in order to test wisely.
 
 import logging
 
@@ -57,7 +59,8 @@ def main():
 
     for i in range(10):
         log.info("inserting row %d" % i)
-        session.execute(query, dict(key="key%d" % i, a='a', b='b'))
+        # Modified by Carles Mateo to add accents and test encoding
+        session.execute(query, dict(key="key%d" % i, a='aàäâáç', b='b'))
         session.execute(prepared.bind(("key%d" % i, 'b', 'b')))
 
     future = session.execute_async("SELECT * FROM mytable")

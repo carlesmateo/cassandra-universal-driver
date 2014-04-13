@@ -6,6 +6,9 @@
 # by Carles Mateo
 # http://blog.carlesmateo.com
 
+# Use with Python 2.7+
+# Original Cassandra driver not supporting Python 3
+
 import cgi
 import cgitb
 import logging
@@ -26,15 +29,15 @@ from cassandra import ConsistencyLevel
 from cassandra.cluster import Cluster
 from cassandra.query import SimpleStatement
 
-s_row_separator = "||*||"
-s_end_of_row = "//*//"
-s_data = ''
+s_row_separator = u"||*||"
+s_end_of_row = u"//*//"
+s_data = u""
 
 st_arguments = cgi.FieldStorage()
 
 b_error = 0
 i_error_code = 0
-s_html_output = ''
+s_html_output = u""
 b_use_keyspace = 1
 b_use_user_and_password = 1
 
@@ -61,10 +64,11 @@ def returnError(i_error_code, s_error_description, s_format = 'html'):
     return
 
 def returnResponse(i_error_code, s_error_description, i_counter, s_data, s_format = 'html'):
+
     if s_format == 'xml':
         print ("Content-Type: text/xml")
         print ("")
-        s_html_output = "<?xml version='1.0' standalone='yes'?>"
+        s_html_output = u"<?xml version='1.0' encoding='utf-8' standalone='yes'?>"
         s_html_output = s_html_output + '<response>' \
                                         '<status>' \
                                         '<error_code>' + str(i_error_code) + '</error_code>' \
@@ -74,17 +78,41 @@ def returnResponse(i_error_code, s_error_description, i_counter, s_data, s_forma
                                         '<data>' + s_data + '</data>' \
                                         '</response>'
     else:
-        print("Content-Type: text/html")
+        print("Content-Type: text/html; charset=utf-8")
         print("")
         s_html_output = str(i_error_code)
         s_html_output = s_html_output + '\n' + s_error_description + '\n'
         s_html_output = s_html_output + str(i_counter) + '\n'
-        s_html_output = s_html_output + str(s_data) + '\n'
+        s_html_output = s_html_output + s_data + '\n'
 
     log.info(s_html_output)
-    print(s_html_output)
+    print(s_html_output.encode('utf-8'))
     sys.exit()
     return
+
+def converToString(s_input):
+    # Convert other data types to string
+    if isinstance(s_input, (int, float, bool)):
+        # Convert to string
+        s_input = str(s_input)
+
+    return s_input
+
+def convertToUtf8(s_input):
+    return s_input.encode('utf-8')
+
+def debugp(s_input):
+    # Just for your tests
+    print("Content-Type: text/html; charset=utf-8")
+    print("")
+
+    print (s_input)
+
+    return
+
+# ********************
+# Start of the program
+# ********************
 
 # First format of the response
 try:
@@ -147,7 +175,7 @@ if (b_use_keyspace == 1):
 # 127.0.0.1/cgi-bin/cud.py?cluster=127.0.0.1&user=test&password=test&keyspace=test&cql=INSERT+INTO+test+%28userid%2Cfirstname%2Clastname%29+VALUES+%281%2C%27Carles%27%2C%27Mateo%27%29
 
 # Select from mytable
-# 127.0.0.1/cgi-bin/cud.py?cluster=127.0.0.1&user=test&password=test&keyspace=test&cql=SELECT+*+FROM mytable
+# 127.0.0.1/cgi-bin/cud.py?cluster=127.0.0.1&user=test&password=test&keyspace=test&cql=SELECT+*+FROM+mytable
 
 try:
     o_results = session.execute_async(s_cql)
@@ -176,12 +204,14 @@ try:
                 s_data = s_data + '<row>'
 
             for key, value in vars(row).iteritems():
-                # Convert to string numbers or other types
                 if value is not None:
+                    # Convert to string numbers or other types
+                    value = converToString(value)
                     if s_format == 'xml':
-                        s_data = s_data + '<' + key + '>' + str(value) + '</' + key + '>'
+                        s_data = s_data + '<' + key + '>' + value + '</' + key + '>'
                     else:
-                        s_data = s_data + str(value) + s_row_separator
+                        s_data = s_data + value
+                        s_data = s_data + s_row_separator
                 else:
                     if s_format == 'xml':
                         s_data = s_data + '<' + key + '>' + '</' + key + '>'
@@ -192,7 +222,7 @@ try:
                 s_data = s_data + '</row>'
             else:
                 s_data = s_data + s_end_of_row
-            #log.info('\t'.join(row))
+        #log.info('\t'.join(row))
 except Exception as e:
     # No iterable data
     returnSuccess(i_counter, s_data, s_format)

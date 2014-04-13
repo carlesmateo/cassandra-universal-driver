@@ -2,6 +2,16 @@ Changelog
 =========
 http://cassandradriver.com
 
+2014-04-12 - V.1.12
+Carles Mateo
+UTF-8 support
+
+Added client_samples/bash sample with bash and curl
+
+2014-04-12 - V.1.11
+Carles Mateo
+Added Form Sample Application, Form to query C.U.D.
+
 2014-04-10 - V.1.1
 Carles Mateo
 Added Perl Sample
