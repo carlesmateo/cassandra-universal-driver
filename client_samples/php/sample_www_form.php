@@ -54,7 +54,7 @@ if (isset($_POST['cql'])) {
 
     $i_start_time = microtime(true);
 
-    $s_cud_request = "http://127.0.0.1/cgi-bin/cud.py?format=$s_format&cluster=$s_cluster&user=test&password=test&keyspace=test&cql=$s_cql_encoded";
+    $s_cud_request = "http://127.0.0.1/cgi-bin/cud.py?format=$s_format&cluster=$s_cluster&user=test&password=test&keyspace=$s_keyspace&cql=$s_cql_encoded";
 
     if ($s_format == 'html') {
         $ch = curl_init($s_cud_request);
