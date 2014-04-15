@@ -2,11 +2,13 @@ Changelog
 =========
 http://cassandradriver.com
 
-2014-04-15 - V.1.12
+2014-04-15 - V.1.14
 Carles Mateo
+Added to Driver cud.py escaping of < > & to html entities, to avoid problems with XML
+
 Added htmlentites to sample_www_form.php to display the <> characters.
 
-Added display of the original query to the driver.
+Added to sample_www_form.php display of the original query to the driver.
 
 2014-04-13 - V.1.12
 Carles Mateo

@@ -72,7 +72,7 @@ def returnResponse(i_error_code, s_error_description, i_counter, s_data, s_forma
         s_html_output = s_html_output + '<response>' \
                                         '<status>' \
                                         '<error_code>' + str(i_error_code) + '</error_code>' \
-                                        '<error_description>' + s_error_description + '</error_description>' \
+                                        '<error_description>' + cgi.escape(s_error_description) + '</error_description>' \
                                         '<rows_returned>' + str(i_counter) + '</rows_returned>' \
                                         '</status>' \
                                         '<data>' + s_data + '</data>' \
