@@ -15,6 +15,9 @@ echo "Simple deploy"
 echo "============="
 echo
 echo "by Carles Mateo http://blog.carlesmateo.com"
+echo "Manual at http://cassandradriver.com/manual"
+echo
+echo "If you installed all the requirements, this script does a fast deploy"
 echo
 echo "Copying Cassandra Universal Driver to $s_dir_destination"
 echo
@@ -34,5 +37,5 @@ echo
 sudo rsync $s_rsync_params $s_dir_origin_php_samples $s_dir_destination_www
 
 echo
-echo "Finished"
+echo "Finished. Test it with http://127.0.0.1/sample_www_form.php"
 echo
