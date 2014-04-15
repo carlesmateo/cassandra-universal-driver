@@ -2,6 +2,12 @@ Changelog
 =========
 http://cassandradriver.com
 
+2014-04-15 - V.1.12
+Carles Mateo
+Added htmlentites to sample_www_form.php to display the <> characters.
+
+Added display of the original query to the driver.
+
 2014-04-13 - V.1.12
 Carles Mateo
 Added sample code for node.js
