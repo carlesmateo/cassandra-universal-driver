@@ -69,7 +69,9 @@ if (isset($_POST['cql'])) {
     $i_finish_time_http = microtime(true);
 
     echo 'Your original query:<br />';
-    echo '<pre>'.$s_cql.'</pre>';
+    echo '<pre>'.htmlentities($s_cql).'</pre>';
+    echo 'Query to driver:<br />';
+    echo '<pre>'.htmlentities($s_cud_request).'</pre>';
     echo '<br />';
 
     if ($s_format == 'xml') {
