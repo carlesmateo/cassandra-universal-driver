@@ -31,7 +31,7 @@ sudo rsync $s_rsync_params $s_dir_origin_cassandra $s_dir_destination
 echo
 echo "3.- Copying PHP samples to $s_dir_destination_www"
 echo
-sudo rsync $s_rsync_params $s_dir_origin_php_samples $s_dir_destination
+sudo rsync $s_rsync_params $s_dir_origin_php_samples $s_dir_destination_www
 
 echo
 echo "Finished"
