@@ -16,7 +16,7 @@ import sys
 
 cgitb.enable() # Optional; for debugging only
 
-__author__ = 'carles.mateo@gmail.com'
+__author__ = 'Carles Mateo'
 __blog__ = 'http://blog.carlesmateo.com'
 
 log = logging.getLogger()
@@ -38,32 +38,30 @@ st_arguments = cgi.FieldStorage()
 b_error = 0
 i_error_code = 0
 s_html_output = u""
-b_use_keyspace = 1
-b_use_user_and_password = 1
+b_use_keyspace = 1          # By default use keyspace
+b_use_user_and_password = 1 # Not implemented yet
 
-#TODO: port
-
-def getParam(st_arguments, s_param):
+def get_param(st_arguments, s_param):
     if st_arguments.has_key(s_param):
         return str(st_arguments.getvalue(s_param))
 
     return ''
 
-def returnSuccess(i_counter, s_data, s_format = 'html'):
+def return_success(i_counter, s_data, s_format = 'html'):
     i_error_code = 0
     s_error_description = 'Data returned Ok'
 
-    returnResponse(i_error_code, s_error_description, i_counter, s_data, s_format)
+    return_response(i_error_code, s_error_description, i_counter, s_data, s_format)
     return
 
-def returnError(i_error_code, s_error_description, s_format = 'html'):
+def return_error(i_error_code, s_error_description, s_format = 'html'):
     i_counter = 0
     s_data = ''
 
-    returnResponse(i_error_code, s_error_description, i_counter, s_data, s_format)
+    return_response(i_error_code, s_error_description, i_counter, s_data, s_format)
     return
 
-def returnResponse(i_error_code, s_error_description, i_counter, s_data, s_format = 'html'):
+def return_response(i_error_code, s_error_description, i_counter, s_data, s_format = 'html'):
 
     if s_format == 'xml':
         print ("Content-Type: text/xml")
@@ -72,7 +70,7 @@ def returnResponse(i_error_code, s_error_description, i_counter, s_data, s_forma
         s_html_output = s_html_output + '<response>' \
                                         '<status>' \
                                         '<error_code>' + str(i_error_code) + '</error_code>' \
-                                        '<error_description>' + cgi.escape(s_error_description) + '</error_description>' \
+                                        '<error_description>' + '<![CDATA[' + s_error_description + ']]>' + '</error_description>' \
                                         '<rows_returned>' + str(i_counter) + '</rows_returned>' \
                                         '</status>' \
                                         '<data>' + s_data + '</data>' \
@@ -90,23 +88,50 @@ def returnResponse(i_error_code, s_error_description, i_counter, s_data, s_forma
     sys.exit()
     return
 
-def converToString(s_input):
+def convert_to_string(s_input):
     # Convert other data types to string
-    if isinstance(s_input, (int, float, bool, list, dict, tuple, set)):
-        # Convert to string
-        s_input = str(s_input)
 
-    return s_input
+    s_output = s_input
 
-def convertToUtf8(s_input):
+    try:
+        if value is not None:
+
+            if isinstance(s_input, unicode):
+                # string unicode, do nothing
+                return s_output
+
+            if isinstance(s_input, (int, float, bool, set, list, tuple, dict)):
+                # Convert to string
+                s_output = str(s_input)
+                return s_output
+
+            # This is another type, try to convert
+            s_output = str(input)
+            return s_output
+
+        else:
+            # is none
+            s_output = ""
+            return s_output
+
+    except Exception as e:
+        # Were unable to convert to str, will return as empty string
+        s_output = ""
+
+    return s_output
+
+def convert_to_utf8(s_input):
     return s_input.encode('utf-8')
 
-def debugp(s_input):
+def debugp(s_input, b_stop = 1):
     # Just for your tests
     print("Content-Type: text/html; charset=utf-8")
     print("")
 
     print (s_input)
+
+    if b_stop == 1:
+        sys.exit()
 
     return
 
@@ -114,51 +139,52 @@ def debugp(s_input):
 # Start of the program
 # ********************
 
+# Errors
+# 100 'Error parameters not send. Call with params: cql and cluster'
+# 110 'Problem with param format'
+# 200 'Cannot connect to cluster ' + s_cluster + ' on port ' + s_port + '.' + e.message
+# 210 'Keyspace ' + s_keyspace + ' does not exist'
+# 300 'Error executing query. ' + e.message
+# 310 'Query returned result error. ' + e.message
+
+
 # First format of the response
-try:
-    s_format = getParam(st_arguments, 'format')
-    if s_format == '':
-        s_format = 'html'
-except Exception:
-    returnError(110, 'Problem with param format')
+s_format = get_param(st_arguments, 'format')
+if s_format == '':
+    s_format = 'html'
 
-try:
-    s_cql = getParam(st_arguments, 'cql')
-    s_cluster = getParam(st_arguments, 'cluster')
-    if s_cql == '' or s_cluster == '':
-        returnError(100, 'Error parameters not send. Call with params: cql and cluster', s_format)
-except Exception:
-    returnError(100, 'Error parameters not send. Call with params: cql and cluster', s_format)
+s_cql = get_param(st_arguments, 'cql')
+s_cluster = get_param(st_arguments, 'cluster')
+if s_cql == '' or s_cluster == '':
+    return_error(100, 'Error parameters not send. Call with params: cql and cluster', s_format)
 
-try:
-    s_keyspace = getParam(st_arguments, 'keyspace')
-    if s_keyspace == '':
-        b_use_keyspace = 0
-except Exception:
+s_port = get_param(st_arguments, 'port')
+if s_port == '':
+    s_port = 9042 # default port
+
+i_port = int(s_port)
+
+s_keyspace = get_param(st_arguments, 'keyspace')
+if s_keyspace == '':
     b_use_keyspace = 0
 
-try:
-    s_user = getParam(st_arguments, 'user')
-    s_password = getParam(st_arguments, 'password')
-    if s_user == '' or s_password == '':
-        b_use_user_and_password = 0
-except Exception:
+s_user = get_param(st_arguments, 'user')
+s_password = get_param(st_arguments, 'password')
+if s_user == '' or s_password == '':
     b_use_user_and_password = 0
-    s_user = ''
-    s_password = ''
 
 try:
-    cluster = Cluster([s_cluster])
+    cluster = Cluster([s_cluster], i_port)
     session = cluster.connect()
 except Exception as e:
-    returnError(200, 'Cannot connect to cluster ' + s_cluster + '.' + e.message, s_format)
+    return_error(200, 'Cannot connect to cluster ' + s_cluster + ' on port ' + s_port + '.' + e.message, s_format)
 
 if (b_use_keyspace == 1):
     #log.info("setting keyspace...")
     try:
         session.set_keyspace(s_keyspace)
     except:
-        returnError(210, 'Keyspace ' + s_keyspace + ' does not exist', s_format)
+        return_error(210, 'Keyspace ' + s_keyspace + ' does not exist', s_format)
 
 # Samples:
 # Create Keyspace test
@@ -180,21 +206,23 @@ if (b_use_keyspace == 1):
 try:
     o_results = session.execute_async(s_cql)
 except Exception as e:
-    returnError(300, 'Error executing query. ' + e.message, s_format)
+    return_error(300, 'Error executing query. ' + e.message, s_format)
 
 try:
     rows = o_results.result()
 except Exception as e:
-    returnError(310, 'Query returned result error. ' + e.message, s_format)
+    return_error(310, 'Query returned result error. ' + e.message, s_format)
 
 # Query returned values
 i_counter = 0
 try:
     if rows is not None:
         for row in rows:
+            #log.info('\t'.join(row))
             i_counter = i_counter + 1
 
             if i_counter == 1 and s_format == 'html':
+                # first row is row titles
                 for key, value in vars(row).iteritems():
                     s_data = s_data + key + s_row_separator
 
@@ -204,27 +232,22 @@ try:
                 s_data = s_data + '<row>'
 
             for key, value in vars(row).iteritems():
-                if value is not None:
-                    # Convert to string numbers or other types
-                    value = converToString(value)
-                    if s_format == 'xml':
-                        s_data = s_data + '<' + key + '>' + value + '</' + key + '>'
-                    else:
-                        s_data = s_data + value
-                        s_data = s_data + s_row_separator
+                # Convert to string numbers or other types
+                s_value = convert_to_string(value)
+                if s_format == 'xml':
+                    s_data = s_data + '<' + key + '>' + '<![CDATA[' + s_value + ']]>' + '</' + key + '>'
                 else:
-                    if s_format == 'xml':
-                        s_data = s_data + '<' + key + '>' + '</' + key + '>'
-                    else:
-                        s_data = s_data + s_row_separator
+                    s_data = s_data + s_value
+                    s_data = s_data + s_row_separator
+
 
             if s_format == 'xml':
                 s_data = s_data + '</row>'
             else:
                 s_data = s_data + s_end_of_row
-            #log.info('\t'.join(row))
+
 except Exception as e:
     # No iterable data
-    returnSuccess(i_counter, s_data, s_format)
+    return_success(i_counter, s_data, s_format)
 
-returnSuccess(i_counter, s_data, s_format)
+return_success(i_counter, s_data, s_format)
