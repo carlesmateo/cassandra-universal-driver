@@ -6,9 +6,11 @@ http://cassandradriver.com
 Carles Mateo
 Fixed a small bug with type conversion when server can't connect to port
 
-Added the ability to query another C.U.D. server, path and port in sample client_sample/php/sample_www_form.php
+Added the ability to query another C.U.D. server, path and port in sample client_samples/php/sample_www_form.php
 
-Added the ability to specify the Cassandra port in sample client_sample/php/sample_www_form.php
+Added the ability to specify the Cassandra port in sample client_samples/php/sample_www_form.php
+
+client_samples/php/sample_www_form.php checks if the simplexml_load_file returned false, what means that the XML responded by the driver had a problem/was malformed. This doesn't have to happen but it is trapped just in case. That case could happen if the cud.py had an exception and returned a malformed XML file.
 
 simple_deploy.sh checks for the existence of the files before trying to copy
 
