@@ -2,6 +2,14 @@ Changelog
 =========
 http://cassandradriver.com
 
+2014-04-16 - V.1.15
+Carles Mateo
+Sorry, due to license request by a Datastax's engineer I removed the Datastax python driver.
+You have to download yourself from:
+https://github.com/datastax/python-driver
+
+The files needed are the folder cassandra/ and example.py
+
 2014-04-15 - V.1.14
 Carles Mateo
 Added support for connecting to different port
