@@ -160,7 +160,7 @@ if s_cql == '' or s_cluster == '':
 
 s_port = get_param(st_arguments, 'port')
 if s_port == '':
-    s_port = 9042 # default port
+    s_port = "9042" # default port
 
 i_port = int(s_port)
 

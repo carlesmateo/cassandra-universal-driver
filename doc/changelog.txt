@@ -2,6 +2,16 @@ Changelog
 =========
 http://cassandradriver.com
 
+2014-04-18 - V.1.16
+Carles Mateo
+Fixed a small bug with type conversion when server can't connect to port
+
+Added the ability to query another C.U.D. server, path and port in sample client_sample/php/sample_www_form.php
+
+Added the ability to specify the Cassandra port in sample client_sample/php/sample_www_form.php
+
+simple_deploy.sh checks for the existence of the files before trying to copy
+
 2014-04-16 - V.1.15
 Carles Mateo
 Sorry, due to license request by a Datastax's engineer I removed the Datastax python driver.
