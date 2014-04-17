@@ -18,3 +18,4 @@ Files needed from Datastax python driver
 + cassandra/        - This folder has the original drivers from Datastax, has to be copied to cgi-bin also, or be accessible by the cud.py
 |
 --example.py        - This file is the original sample from Datastax, shipped with their Python driver. It has a typo in line 82.
+                      Simple needed if you want to check connectivity from command line.
