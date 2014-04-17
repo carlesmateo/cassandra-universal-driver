@@ -1,15 +1,20 @@
 Folder structure
 ================
 
-cassandra-universal-driver
-+ cassandra        - This folder has the original drivers from Datastax, has to be copied to cgi-bin also, or be accessible by the cud.py
+cassandra-universal-driver/
 |
-+ cgi-bin          - This folder contains cud.py , the Universal Driver, that will get the request. http://127.0.0.1/cgi-bin has to be mapped here
++ cgi-bin/          - This folder contains cud.py , the Universal Driver, that will get the request. http://127.0.0.1/cgi-bin has to be mapped here
 |
-+ client_samples   - Here reside different samples in several languages and the Query Form in php/sample_www_form.php
++ client_samples/   - Here reside different samples in several languages and the Query Form in php/sample_www_form.php
 |
-+ doc              - Some documentation
++ doc/              - Some documentation
 |
---example.py       - This file is the original sample from Datastax, shipped with their Python driver
+--simple_deploy.sh  - Bash program that copies the cgi to default Apache folder and samples to /var/www
 |
---simple_deploy.sh - Bash program that copies the cgi to default Apache folder and samples to /var/www
+--easy_installer.sh - A easy installer that installs everything in a clean server
+
+Files needed from Datastax python driver
+
++ cassandra/        - This folder has the original drivers from Datastax, has to be copied to cgi-bin also, or be accessible by the cud.py
+|
+--example.py        - This file is the original sample from Datastax, shipped with their Python driver. It has a typo in line 82.
